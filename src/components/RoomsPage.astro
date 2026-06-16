@@ -1,0 +1,510 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const content = {
+	pl: {
+		metaTitle: 'Pokoje | U Kostka Krasnobród',
+		metaDescription:
+			'Pokoje 2-, 3- i 4-osobowe w Krasnobrodzie, 50 metrów od zalewu.',
+		kicker: 'Pokoje / Krasnobród',
+		title: 'Pokoje 50 metrów od zalewu',
+		description:
+			'Dwa kameralne obiekty z pokojami 2-, 3- i 4-osobowymi. Do dyspozycji gości są prywatne łazienki, kuchnie, WiFi, parking oraz ogród z miejscem do odpoczynku.',
+		cta: 'Zapytaj o termin',
+		objectsCta: 'Zobacz obiekty',
+	},
+	en: {
+		metaTitle: 'Rooms | U Kostka Krasnobród',
+		metaDescription:
+			'Rooms for 2, 3 and 4 guests in Krasnobród, 50 meters from the lagoon.',
+		kicker: 'Rooms / Krasnobród',
+		title: 'Rooms 50 meters from the lagoon',
+		description:
+			'Two cozy guesthouse buildings with rooms for 2, 3 and 4 guests. Private bathrooms, shared kitchens, WiFi, parking and garden space for relaxing.',
+		cta: 'Ask about dates',
+		objectsCta: 'See the buildings',
+	},
+};
+
+const t = content[lang];
+
+const facts = {
+	pl: ['2 obiekty', 'Pokoje 2-4 osobowe', '50 m od zalewu', 'WiFi', 'Parking'],
+	en: [
+		'2 buildings',
+		'Rooms for 2-4 guests',
+		'50 m from the lagoon',
+		'WiFi',
+		'Parking',
+	],
+};
+
+const amenities = {
+	pl: [
+		'WiFi',
+		'Parking',
+		'Ogólnodostępna kuchnia',
+		'Salon z TV',
+		'Miejsce na grilla',
+		'Altanka',
+		'Plac zabaw dla dzieci',
+		'Huśtawka',
+		'Piaskownica',
+		'Trampolina',
+		'Miejsce do wypoczynku',
+		'Noclegi blisko zalewu',
+	],
+	en: [
+		'WiFi',
+		'Parking',
+		'Shared kitchen',
+		'TV lounge',
+		'Barbecue area',
+		'Garden shelter',
+		'Children’s playground',
+		'Swing',
+		'Sandpit',
+		'Trampoline',
+		'Outdoor relaxation area',
+		'Accommodation near the lagoon',
+	],
+};
+
+const nearby = {
+	pl: [
+		'Zalew około 50 m od obiektu',
+		'Sklep spożywczy',
+		'Stołówka i bary',
+		'Wypożyczalnie gokartów',
+		'Sprzęt wodny',
+		'Trasy spacerowe i rowerowe',
+	],
+	en: [
+		'Lagoon about 50 m from the property',
+		'Grocery shop nearby',
+		'Canteen and bars',
+		'Go-kart rentals',
+		'Water equipment rentals',
+		'Walking and cycling routes',
+	],
+};
+
+const gardenContent = {
+	pl: {
+		kicker: 'Ogród i atrakcje na miejscu',
+		title: 'Miejsce do odpoczynku po dniu nad zalewem',
+		description:
+			'Na miejscu goście mają do dyspozycji ogród, wiaty, miejsce na grilla oraz prostą strefę dla dzieci. To dobre uzupełnienie pobytu, kiedy chcecie zostać blisko obiektu.',
+	},
+	en: {
+		kicker: 'Garden and on-site attractions',
+		title: 'A place to rest after a day by the lagoon',
+		description:
+			'Guests can use the garden, shelters, barbecue area and a simple play zone for children. It is a useful addition when you want to stay close to the property.',
+	},
+};
+
+const gardenFeatures = [
+	{
+		src: '/images/rooms/ogrod1.png',
+		title: { pl: 'Ogród', en: 'Garden' },
+		description: {
+			pl: 'Spokojna przestrzeń do odpoczynku przy obiekcie.',
+			en: 'A calm outdoor space for relaxing by the property.',
+		},
+	},
+	{
+		src: '/images/rooms/wiata_dom_obiekt1.png',
+		title: { pl: 'Wiata przy obiekcie', en: 'Garden shelter' },
+		description: {
+			pl: 'Miejsce na wspólne siedzenie, posiłek i wieczorny odpoczynek.',
+			en: 'A place to sit together, eat and relax in the evening.',
+		},
+	},
+	{
+		src: '/images/rooms/plac_zabaw1.png',
+		title: { pl: 'Plac zabaw', en: 'Playground' },
+		description: {
+			pl: 'Prosta strefa dla dzieci blisko pokoi.',
+			en: 'A simple play area for children close to the rooms.',
+		},
+	},
+	{
+		src: '/images/rooms/piaskownica.png',
+		title: { pl: 'Piaskownica', en: 'Sandpit' },
+		description: {
+			pl: 'Dodatkowa atrakcja dla najmłodszych gości.',
+			en: 'An extra attraction for the youngest guests.',
+		},
+	},
+	{
+		src: '/images/rooms/wiata2_wieczór.png',
+		title: { pl: 'Wieczór w ogrodzie', en: 'Evening in the garden' },
+		description: {
+			pl: 'Klimatyczne miejsce na spokojne zakończenie dnia.',
+			en: 'An atmospheric place for a quiet end to the day.',
+		},
+	},
+	{
+		src: '/images/rooms/wiata3_wieczór.png',
+		title: { pl: 'Strefa wypoczynku', en: 'Relaxation area' },
+		description: {
+			pl: 'Wiaty i miejsce do rozmów po powrocie z atrakcji.',
+			en: 'Shelters and space to talk after returning from local attractions.',
+		},
+	},
+];
+
+const garden = gardenContent[lang];
+---
+
+<Layout
+	lang={lang}
+	langHref={lang === 'pl' ? '/en/rooms' : '/pokoje'}
+	title={t.metaTitle}
+	description={t.metaDescription}
+>
+	<main class="bg-[#f7f1e8] text-[#173b2f]">
+		<section class="relative overflow-hidden bg-[#173b2f] pt-36 text-white">
+			<div
+				class="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(241,223,194,0.28),transparent_34%),linear-gradient(135deg,rgba(23,59,47,0.98),rgba(23,59,47,0.72)_48%,rgba(138,111,69,0.5))]"
+			>
+			</div>
+
+			<div
+				class="relative mx-auto grid max-w-6xl gap-12 px-6 pb-20 pt-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center"
+			>
+				<div>
+					<p
+						class="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-[#f1dfc2]"
+					>
+						{t.kicker}
+					</p>
+
+					<h1
+						class="max-w-3xl text-5xl font-semibold leading-[1.04] md:text-6xl"
+					>
+						{t.title}
+					</h1>
+
+					<p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+						{t.description}
+					</p>
+
+					<div class="mt-10 flex flex-col gap-4 sm:flex-row">
+						<a
+							href={lang === 'pl' ? '/kontakt' : '/en/contact'}
+							class="inline-flex justify-center rounded-full bg-[#f1dfc2] px-7 py-4 text-sm font-semibold text-[#173b2f] transition hover:bg-white"
+						>
+							{t.cta}
+						</a>
+
+						<a
+							href="#obiekty"
+							class="inline-flex justify-center rounded-full border border-white/25 px-7 py-4 text-sm font-semibold text-white transition hover:border-white"
+						>
+							{t.objectsCta}
+						</a>
+					</div>
+				</div>
+
+				<div
+					class="overflow-hidden rounded-[2rem] border border-white/14 shadow-2xl shadow-black/25"
+				>
+					<img
+						src="/images/rooms/obiekt1_front.png"
+						alt="U Kostka Krasnobród"
+						class="h-full max-h-[560px] w-full object-cover"
+					/>
+				</div>
+			</div>
+		</section>
+		<section class="border-b border-[#173b2f]/10 bg-[#f1dfc2]">
+			<div
+				class="mx-auto grid max-w-6xl gap-4 px-6 py-6 sm:grid-cols-2 lg:grid-cols-5"
+			>
+				{
+					facts[lang].map((item) => (
+						<div class="rounded-2xl bg-white/45 px-5 py-4 text-center text-sm font-semibold text-[#173b2f]">
+							{item}
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<section id="obiekty" class="mx-auto max-w-6xl px-6 py-20">
+			<div class="max-w-3xl">
+				<p
+					class="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+				>
+					{lang === 'pl' ? 'Dwa obiekty' : 'Two buildings'}
+				</p>
+
+				<h2 class="text-4xl font-semibold md:text-5xl">
+					{
+						lang === 'pl'
+							? 'Wybierz układ dopasowany do swojego pobytu'
+							: 'Choose the setup that fits your stay'
+					}
+				</h2>
+			</div>
+
+			<div class="mt-12 grid gap-10">
+				<article
+					class="grid overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-[#173b2f]/8 lg:grid-cols-[1.05fr_0.95fr]"
+					x-data="{ activeImage: '/images/rooms/obiekt1_front.png', activeAlt: 'Obiekt pierwszy U Kostka' }"
+				>
+					<div class="min-h-[360px]">
+						<img
+							x-bind:src="activeImage"
+							x-bind:alt="activeAlt"
+							src="/images/rooms/obiekt1_front.png"
+							alt={lang === 'pl'
+								? 'Pierwszy obiekt U Kostka'
+								: 'First U Kostka building'}
+							class="h-full w-full object-cover"
+						/>
+					</div>
+
+					<div class="p-8 md:p-10">
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Obiekt I' : 'Building I'}
+						</p>
+
+						<h3 class="mt-4 text-3xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Dwupoziomowy obiekt blisko zalewu'
+									: 'A two-level building close to the lagoon'
+							}
+						</h3>
+
+						<p class="mt-5 leading-8 text-[#52685f]">
+							{
+								lang === 'pl'
+									? 'W pierwszym obiekcie oferujemy 5 pokoi 2-, 3- i 4-osobowych z prywatnymi łazienkami oraz 2 pokoje 4-osobowe ze wspólną łazienką. Pokoje są wyposażone w TV.'
+									: 'The first building offers 5 rooms for 2, 3 and 4 guests with private bathrooms, plus 2 rooms for 4 guests with a shared bathroom. Rooms include TV.'
+							}
+						</p>
+
+						<ul
+							class="mt-7 grid gap-3 text-sm font-medium text-[#173b2f] sm:grid-cols-2"
+						>
+							{
+								(lang === 'pl'
+									? [
+											'5 pokoi z prywatnymi łazienkami',
+											'2 pokoje 4-osobowe ze wspólną łazienką',
+											'TV w pokojach',
+											'Dostęp do kuchni i salonu',
+										]
+									: [
+											'5 rooms with private bathrooms',
+											'2 rooms for 4 guests with a shared bathroom',
+											'TV in rooms',
+											'Access to kitchen and lounge',
+										]
+								).map((item) => <li>{item}</li>)
+							}
+						</ul>
+
+						<div class="mt-8 grid grid-cols-3 gap-3">
+							{
+								[
+									[
+										'/images/rooms/obiekt1_front.png',
+										lang === 'pl'
+											? 'Pierwszy obiekt U Kostka'
+											: 'First U Kostka building',
+									],
+									[
+										'/images/rooms/obiekt1_pokoj1.png',
+										lang === 'pl'
+											? 'Pokój w obiekcie pierwszym'
+											: 'Room in the first building',
+									],
+									[
+										'/images/rooms/obiekt1_pokoj2.png',
+										lang === 'pl' ? 'Pokój dwuosobowy' : 'Twin room',
+									],
+									[
+										'/images/rooms/obiekt1_kuchnia.png',
+										lang === 'pl'
+											? 'Kuchnia w obiekcie pierwszym'
+											: 'Kitchen in the first building',
+									],
+								].map(([src, alt]) => (
+									<button
+										type="button"
+										class="overflow-hidden rounded-2xl border border-[#173b2f]/10 transition hover:border-[#173b2f]/45"
+										@click={`activeImage = '${src}'; activeAlt = '${alt}'`}
+									>
+										<img
+											src={src}
+											alt={alt}
+											class="aspect-square object-cover"
+										/>
+									</button>
+								))
+							}
+						</div>
+					</div>
+				</article>
+				<article
+					class="grid overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-[#173b2f]/8 lg:grid-cols-[0.95fr_1.05fr]"
+					x-data="{ activeImage: '/images/rooms/obiekt2.png', activeAlt: 'Drugi obiekt U Kostka' }"
+				>
+					<div class="p-8 md:p-10 lg:order-1">
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Obiekt II' : 'Building II'}
+						</p>
+
+						<h3 class="mt-4 text-3xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Pokoje 4-osobowe z aneksem i strefą wypoczynku'
+									: 'Rooms for 4 guests with kitchen area and lounge space'
+							}
+						</h3>
+
+						<p class="mt-5 leading-8 text-[#52685f]">
+							{
+								lang === 'pl'
+									? 'Drugi obiekt oferuje 4 pokoje 4-osobowe z prywatnymi łazienkami i TV. Do dyspozycji gości jest wspólny aneks kuchenny oraz strefa wypoczynkowa.'
+									: 'The second building offers 4 rooms for 4 guests, each with a private bathroom and TV. Guests can use a shared kitchen area and a relaxation space.'
+							}
+						</p>
+
+						<ul
+							class="mt-7 grid gap-3 text-sm font-medium text-[#173b2f] sm:grid-cols-2"
+						>
+							{
+								(lang === 'pl'
+									? [
+											'4 pokoje 4-osobowe',
+											'Prywatne łazienki',
+											'TV w pokojach',
+											'Wspólny aneks kuchenny',
+										]
+									: [
+											'4 rooms for 4 guests',
+											'Private bathrooms',
+											'TV in rooms',
+											'Shared kitchen area',
+										]
+								).map((item) => <li>{item}</li>)
+							}
+						</ul>
+
+						<div class="mt-8 grid grid-cols-3 gap-3">
+							{
+								[
+									[
+										'/images/rooms/obiekt2.png',
+										lang === 'pl'
+											? 'Drugi obiekt U Kostka'
+											: 'Second U Kostka building',
+									],
+									[
+										'/images/rooms/obiekt2_pokoj.png',
+										lang === 'pl'
+											? 'Pokój w drugim obiekcie'
+											: 'Room in the second building',
+									],
+									[
+										'/images/rooms/obiekt2_kuchnia.png',
+										lang === 'pl'
+											? 'Kuchnia w drugim obiekcie'
+											: 'Kitchen in the second building',
+									],
+									[
+										'/images/rooms/obiekt2_jadalnia.png',
+										lang === 'pl'
+											? 'Jadalnia w drugim obiekcie'
+											: 'Dining area in the second building',
+									],
+								].map(([src, alt]) => (
+									<button
+										type="button"
+										class="overflow-hidden rounded-2xl border border-[#173b2f]/10 transition hover:border-[#173b2f]/45"
+										@click={`activeImage = '${src}'; activeAlt = '${alt}'`}
+									>
+										<img
+											src={src}
+											alt={alt}
+											class="aspect-square object-cover"
+										/>
+									</button>
+								))
+							}
+						</div>
+					</div>
+
+					<div class="min-h-[360px] lg:order-2">
+						<img
+							x-bind:src="activeImage"
+							x-bind:alt="activeAlt"
+							src="/images/rooms/obiekt2.png"
+							alt={lang === 'pl'
+								? 'Drugi obiekt U Kostka'
+								: 'Second U Kostka building'}
+							class="h-full w-full object-cover"
+						/>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="bg-white/50">
+			<div class="mx-auto max-w-6xl px-6 py-16 md:py-20">
+				<div class="max-w-3xl">
+					<p
+						class="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+					>
+						{garden.kicker}
+					</p>
+
+					<h2 class="text-4xl font-semibold md:text-5xl">
+						{garden.title}
+					</h2>
+
+					<p class="mt-5 leading-8 text-[#52685f]">
+						{garden.description}
+					</p>
+				</div>
+
+				<div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+					{
+						gardenFeatures.map((feature) => (
+							<article class="overflow-hidden rounded-[1.5rem] bg-white shadow-lg shadow-[#173b2f]/8">
+								<img
+									src={feature.src}
+									alt={feature.title[lang]}
+									class="h-56 w-full object-cover"
+									loading="lazy"
+								/>
+								<div class="p-6">
+									<h3 class="text-xl font-semibold">{feature.title[lang]}</h3>
+									<p class="mt-3 text-sm leading-6 text-[#52685f]">
+										{feature.description[lang]}
+									</p>
+								</div>
+							</article>
+						))
+					}
+				</div>
+			</div>
+		</section>
+	</main>
+</Layout>

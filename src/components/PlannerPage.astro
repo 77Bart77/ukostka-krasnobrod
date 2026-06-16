@@ -1,0 +1,805 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { attractions } from '../data/attractions';
+
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const eveningAttractionId = 'grill-ogrod-u-kostka';
+
+const content = {
+	pl: {
+		metaTitle: 'Planer pobytu | U Kostka Krasnobród',
+		metaDescription: 'Zaplanuj pobyt w Krasnobrodzie i okolicach Roztocza.',
+		kicker: 'Planer pobytu',
+		title: 'Ułóż swój pobyt w Krasnobrodzie',
+		description:
+			'Wybierz z kim jedziesz, tempo pobytu i atrakcje, a planner pomoże ułożyć plan dzień po dniu.',
+	},
+	en: {
+		metaTitle: 'Stay Planner | U Kostka Krasnobród',
+		metaDescription: 'Plan your stay in Krasnobród and the Roztocze region.',
+		kicker: 'Stay Planner',
+		title: 'Plan your stay in Krasnobród',
+		description:
+			'Choose who you travel with, your pace and interests, and the planner will help build a day-by-day plan.',
+	},
+};
+
+const t = content[lang];
+const plannerAttractions = attractions
+	.filter((attraction) => attraction.id !== eveningAttractionId)
+	.map((attraction) => ({
+		id: attraction.id,
+		title: attraction.title[lang],
+		description: attraction.description[lang],
+		location: attraction.location,
+		distance: attraction.distance,
+		duration: attraction.duration,
+		tags: attraction.tags,
+		transport: attraction.transport,
+		weather: attraction.weather,
+		pace: attraction.pace,
+		audience: attraction.audience,
+	}));
+// Labels used by Alpine in the live summary panel.
+const summaryLabels = {
+	group: {
+		solo: lang === 'pl' ? 'Solo' : 'Solo',
+		couple: lang === 'pl' ? 'Para' : 'Couple',
+		family: lang === 'pl' ? 'Rodzina' : 'Family',
+		friends: lang === 'pl' ? 'Znajomi' : 'Friends',
+		seniors: lang === 'pl' ? 'Seniorzy' : 'Seniors',
+	},
+	pace: {
+		calm: lang === 'pl' ? 'Spokojnie' : 'Calm',
+		balanced: lang === 'pl' ? 'Zbalansowanie' : 'Balanced',
+		active: lang === 'pl' ? 'Aktywnie' : 'Active',
+	},
+	transport: {
+		walk: lang === 'pl' ? 'Pieszo' : 'On foot',
+		bike: lang === 'pl' ? 'Rower' : 'Bike',
+		car: lang === 'pl' ? 'Samochód' : 'Car',
+		mixed: lang === 'pl' ? 'Mieszane' : 'Mixed',
+	},
+	interests: {
+		water: lang === 'pl' ? 'Woda' : 'Water',
+		nature: lang === 'pl' ? 'Przyroda' : 'Nature',
+		views: lang === 'pl' ? 'Widoki' : 'Views',
+		history: lang === 'pl' ? 'Historia' : 'History',
+		kids: lang === 'pl' ? 'Dzieci' : 'Kids',
+		active: lang === 'pl' ? 'Aktywnie' : 'Active',
+		kayaks: lang === 'pl' ? 'Kajaki' : 'Kayaks',
+		rain: lang === 'pl' ? 'Deszcz' : 'Rain',
+	},
+	day: lang === 'pl' ? 'dni' : 'days',
+	week: lang === 'pl' ? 'Tydzień' : 'Week',
+};
+
+// Initial form state. Alpine reads this object and keeps the form and summary in sync.
+const plannerState = `{
+	groupType: '',
+	days: '',
+	pace: '',
+	transport: '',
+	interests: [],
+	showPlan: false,
+	labels: ${JSON.stringify(summaryLabels)},
+	attractions: ${JSON.stringify(plannerAttractions)},
+	resetPlan() {
+	this.groupType = '';
+	this.days = '';
+	this.pace = '';
+	this.transport = '';
+	this.interests = [];
+	this.showPlan = false;
+},
+	getMatchingAttractions() {
+		const neededCount = Number(this.days) * 2;
+		const matches = [];
+		const usedIds = new Set();
+		const matchesAudience = (attraction) => attraction.audience.includes(this.groupType);
+		const matchesPace = (attraction) => attraction.pace.includes(this.pace);
+		const matchesTransport = (attraction) =>
+			this.transport === 'mixed' || attraction.transport.includes(this.transport);
+		const matchesInterests = (attraction) =>
+			this.interests.length === 0 ||
+			this.interests.some((interest) => attraction.tags.includes(interest));
+		const addMatches = (predicate) => {
+			this.attractions.forEach((attraction) => {
+				if (matches.length >= neededCount || usedIds.has(attraction.id) || !predicate(attraction)) {
+					return;
+				}
+
+				usedIds.add(attraction.id);
+				matches.push(attraction);
+			});
+		};
+
+		addMatches(
+			(attraction) =>
+				matchesAudience(attraction) &&
+				matchesPace(attraction) &&
+				matchesTransport(attraction) &&
+				matchesInterests(attraction),
+		);
+		addMatches(
+			(attraction) =>
+				matchesAudience(attraction) && matchesPace(attraction) && matchesTransport(attraction),
+		);
+		addMatches((attraction) => matchesAudience(attraction) && matchesPace(attraction));
+		addMatches((attraction) => matchesAudience(attraction));
+		addMatches((attraction) => matchesInterests(attraction));
+		addMatches(() => true);
+
+		return matches;
+	},
+	getDayAttractions(day) {
+		const matching = this.getMatchingAttractions();
+		const start = (day - 1) * 2;
+		return matching.slice(start, start + 2);
+	},
+	escapeHtml(value) {
+		return String(value)
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#039;');
+	},
+	getPlanDays() {
+		return Array.from({ length: Number(this.days) }, (_, index) => ({
+			number: index + 1,
+			attractions: this.getDayAttractions(index + 1),
+		}));
+	},
+	downloadPdf() {
+		this.showPlan = true;
+		const planDays = this.getPlanDays();
+		const title = '${lang === 'pl' ? 'Plan pobytu U Kostka' : 'U Kostka stay plan'}';
+		const eveningTitle = '${lang === 'pl' ? 'Wieczór w ogrodzie U Kostka' : 'Evening in the U Kostka garden'}';
+		const eveningDescription = '${
+			lang === 'pl'
+				? 'Grill, odpoczynek i spokojne zakończenie dnia po atrakcjach.'
+				: 'Barbecue, rest and a calm end to the day after the attractions.'
+		}';
+		const html = [
+			'<!doctype html>',
+			'<html>',
+			'<head>',
+			'<meta charset="utf-8">',
+			'<title>' + this.escapeHtml(title) + '</title>',
+			'<style>',
+			'@page { margin: 18mm; }',
+			'body { color: #173b2f; font-family: Arial, sans-serif; line-height: 1.45; }',
+			'h1 { font-size: 28px; margin: 0 0 8px; }',
+			'.meta { color: #52685f; margin: 0 0 24px; }',
+			'.day { break-inside: avoid; border-top: 1px solid #d8c6a4; padding-top: 18px; margin-top: 18px; }',
+			'h2 { color: #8a6f45; font-size: 14px; letter-spacing: 0.12em; margin: 0 0 12px; text-transform: uppercase; }',
+			'.item { border: 1px solid #e4d8c6; border-radius: 10px; margin: 10px 0; padding: 12px; }',
+			'.item h3 { font-size: 16px; margin: 0 0 6px; }',
+			'.item p { margin: 6px 0; }',
+			'.details { color: #8a6f45; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }',
+			'.evening { background: #f7f1e8; }',
+			'</style>',
+			'</head>',
+			'<body>',
+			'<h1>' + this.escapeHtml(title) + '</h1>',
+			'<p class="meta">' +
+				this.escapeHtml(this.labels.group[this.groupType]) +
+				' · ' +
+				this.escapeHtml(this.days === '7' ? this.labels.week : this.days + ' ' + this.labels.day) +
+				' · ' +
+				this.escapeHtml(this.labels.pace[this.pace]) +
+				' · ' +
+				this.escapeHtml(this.labels.transport[this.transport]) +
+			'</p>',
+			planDays
+				.map((day) => {
+					const attractionsHtml = day.attractions
+						.map((attraction) =>
+							'<div class="item">' +
+							'<h3>' + this.escapeHtml(attraction.title) + '</h3>' +
+							'<p>' + this.escapeHtml(attraction.description) + '</p>' +
+							'<p class="details">' +
+							this.escapeHtml(attraction.location) +
+							' · ' +
+							this.escapeHtml(attraction.duration.minHours + '-' + attraction.duration.maxHours + 'h') +
+							'</p>' +
+							'</div>',
+						)
+						.join('');
+
+					return (
+						'<section class="day">' +
+						'<h2>${lang === 'pl' ? 'Dzień' : 'Day'} ' +
+						day.number +
+						'</h2>' +
+						attractionsHtml +
+						'<div class="item evening">' +
+						'<h3>' +
+						this.escapeHtml(eveningTitle) +
+						'</h3>' +
+						'<p>' +
+						this.escapeHtml(eveningDescription) +
+						'</p>' +
+						'</div>' +
+						'</section>'
+					);
+				})
+				.join(''),
+			'</body>',
+			'</html>',
+		].join('');
+		const printWindow = window.open('', '_blank', 'width=900,height=700');
+
+		if (!printWindow) {
+			window.print();
+			return;
+		}
+
+		printWindow.document.open();
+		printWindow.document.write(html);
+		printWindow.document.close();
+		printWindow.focus();
+		printWindow.setTimeout(() => {
+			printWindow.print();
+		}, 150);
+	}
+}`;
+
+// Form option data. These arrays render the visible choices in the planner form.
+const groupOptions = [
+	{
+		id: 'solo',
+		label: { pl: 'Solo', en: 'Solo' },
+		description: {
+			pl: 'Spokojny plan dopasowany do jednej osoby.',
+			en: 'A calm plan tailored for one person.',
+		},
+	},
+	{
+		id: 'couple',
+		label: { pl: 'Para', en: 'Couple' },
+		description: {
+			pl: 'Widoki, spacery i miejsca z klimatem.',
+			en: 'Views, walks and atmospheric places.',
+		},
+	},
+	{
+		id: 'family',
+		label: { pl: 'Rodzina', en: 'Family' },
+		description: {
+			pl: 'Atrakcje dobre dla dzieci i spokojniejsze tempo.',
+			en: 'Child-friendly attractions and a calmer pace.',
+		},
+	},
+	{
+		id: 'friends',
+		label: { pl: 'Znajomi', en: 'Friends' },
+		description: {
+			pl: 'Więcej aktywności, kajaki i mocniejsze punkty dnia.',
+			en: 'More activities, kayaking and stronger day plans.',
+		},
+	},
+	{
+		id: 'seniors',
+		label: { pl: 'Seniorzy', en: 'Seniors' },
+		description: {
+			pl: 'Wolniejsze tempo, krótsze trasy i wygodne zwiedzanie.',
+			en: 'Slower pace, shorter routes and easy sightseeing.',
+		},
+	},
+];
+
+const dayOptions = [
+	{ id: '1', label: { pl: '1 dzień', en: '1 day' } },
+	{ id: '2', label: { pl: '2 dni', en: '2 days' } },
+	{ id: '3', label: { pl: '3 dni', en: '3 days' } },
+	{ id: '4', label: { pl: '4 dni', en: '4 days' } },
+	{ id: '5', label: { pl: '5 dni', en: '5 days' } },
+	{ id: '7', label: { pl: 'Tydzień', en: 'Week' } },
+];
+
+const paceOptions = [
+	{
+		id: 'calm',
+		label: { pl: 'Spokojnie', en: 'Calm' },
+	},
+	{
+		id: 'balanced',
+		label: { pl: 'Zbalansowanie', en: 'Balanced' },
+	},
+	{
+		id: 'active',
+		label: { pl: 'Aktywnie', en: 'Active' },
+	},
+];
+
+const transportOptions = [
+	{
+		id: 'walk',
+		label: { pl: 'Pieszo', en: 'On foot' },
+	},
+	{
+		id: 'bike',
+		label: { pl: 'Rower', en: 'Bike' },
+	},
+	{
+		id: 'car',
+		label: { pl: 'Samochód', en: 'Car' },
+	},
+	{
+		id: 'mixed',
+		label: { pl: 'Mieszane', en: 'Mixed' },
+	},
+];
+
+const interestOptions = [
+	{ id: 'water', label: { pl: 'Woda i plaża', en: 'Water and beach' } },
+	{ id: 'nature', label: { pl: 'Przyroda', en: 'Nature' } },
+	{ id: 'views', label: { pl: 'Widoki', en: 'Views' } },
+	{ id: 'history', label: { pl: 'Historia', en: 'History' } },
+	{ id: 'kids', label: { pl: 'Dla dzieci', en: 'For kids' } },
+	{ id: 'active', label: { pl: 'Aktywnie', en: 'Active' } },
+	{ id: 'kayaks', label: { pl: 'Kajaki', en: 'Kayaks' } },
+	{ id: 'rain', label: { pl: 'Na deszcz', en: 'Rainy day' } },
+];
+---
+
+<Layout
+	lang={lang}
+	langHref={lang === 'pl' ? '/en/planner' : '/planer'}
+	title={t.metaTitle}
+	description={t.metaDescription}
+>
+	<main class="bg-[#f7f1e8] text-[#173b2f]">
+		<!-- Page hero: title and short explanation for the planner page. -->
+		<section class="bg-[#173b2f] pt-36 text-white">
+			<div class="mx-auto max-w-6xl px-6 pb-20 pt-12">
+				<p
+					class="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-[#f1dfc2]"
+				>
+					{t.kicker}
+				</p>
+
+				<h1 class="max-w-4xl text-5xl font-semibold leading-[1.04] md:text-6xl">
+					{t.title}
+				</h1>
+
+				<p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+					{t.description}
+				</p>
+			</div>
+		</section>
+
+		<section class="mx-auto max-w-6xl px-6 py-16">
+			<!-- Shared Alpine state for the live summary and the form controls. -->
+			<div x-data={plannerState} class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+				<div>
+					<!-- Sticky live summary: updates as the user changes planner options. -->
+					<div class="sticky top-28">
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Konfiguracja' : 'Configuration'}
+						</p>
+
+						<h2 class="mt-4 text-4xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Powiedz nam, jak chcesz spędzić czas'
+									: 'Tell us how you want to spend your time'
+							}
+						</h2>
+
+						<p class="mt-5 max-w-md text-base leading-7 text-[#52685f]">
+							{
+								lang === 'pl'
+									? 'Na podstawie tych wyborów ułożymy plan dzień po dniu, z atrakcjami blisko obiektu i wycieczkami po Roztoczu.'
+									: 'Based on these choices, we will build a day-by-day plan with nearby attractions and Roztocze trips.'
+							}
+						</p>
+
+						<div
+							class="mt-8 rounded-[1.5rem] bg-white p-6 shadow-xl shadow-[#173b2f]/8"
+						>
+							<p
+								class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+							>
+								{lang === 'pl' ? 'Twój plan' : 'Your plan'}
+							</p>
+
+							<div class="mt-5 space-y-4 text-sm">
+								<div
+									class="flex items-center justify-between gap-4 border-b border-[#173b2f]/10 pb-3"
+								>
+									<span class="text-[#52685f]">
+										{lang === 'pl' ? 'Ekipa' : 'Group'}
+									</span>
+									<strong
+										class="text-right text-[#173b2f]"
+										x-text="labels.group[groupType]"></strong>
+								</div>
+
+								<div
+									class="flex items-center justify-between gap-4 border-b border-[#173b2f]/10 pb-3"
+								>
+									<span class="text-[#52685f]">
+										{lang === 'pl' ? 'Długość' : 'Length'}
+									</span>
+									<strong
+										class="text-right text-[#173b2f]"
+										x-text="days === '7' ? labels.week : days + ' ' + labels.day"
+									></strong>
+								</div>
+
+								<div
+									class="flex items-center justify-between gap-4 border-b border-[#173b2f]/10 pb-3"
+								>
+									<span class="text-[#52685f]">
+										{lang === 'pl' ? 'Tempo' : 'Pace'}
+									</span>
+									<strong
+										class="text-right text-[#173b2f]"
+										x-text="labels.pace[pace]"></strong>
+								</div>
+
+								<div
+									class="flex items-center justify-between gap-4 border-b border-[#173b2f]/10 pb-3"
+								>
+									<span class="text-[#52685f]">
+										{lang === 'pl' ? 'Transport' : 'Transport'}
+									</span>
+									<strong
+										class="text-right text-[#173b2f]"
+										x-text="labels.transport[transport]"></strong>
+								</div>
+
+								<div>
+									<span class="text-[#52685f]">
+										{lang === 'pl' ? 'Zainteresowania' : 'Interests'}
+									</span>
+
+									<div class="mt-3 flex flex-wrap gap-2">
+										<template x-for="interest in interests" :key="interest">
+											<span
+												class="rounded-full bg-[#f1dfc2] px-3 py-1 text-xs font-semibold text-[#173b2f]"
+												x-text="labels.interests[interest]"></span>
+										</template>
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-6 rounded-2xl bg-[#173b2f] p-5 text-white">
+								<p class="text-sm font-semibold">
+									{
+										lang === 'pl'
+											? 'Każdy dzień zakończymy spokojnym wieczorem w ogrodzie U Kostka.'
+											: 'Every day will end with a calm evening in the U Kostka garden.'
+									}
+								</p>
+
+								<p class="mt-2 text-sm leading-6 text-white/70">
+									{
+										lang === 'pl'
+											? 'Grill, odpoczynek i czas na złapanie oddechu po atrakcjach.'
+											: 'Barbecue, rest and time to slow down after the day’s attractions.'
+									}
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Planner form: every input uses x-model to update the shared Alpine state. -->
+				<form
+					class="rounded-[1.5rem] bg-white p-6 shadow-xl shadow-[#173b2f]/8 md:p-8"
+				>
+					<div>
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Krok 1' : 'Step 1'}
+						</p>
+
+						<h3 class="mt-2 text-2xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Z kim jedziesz?'
+									: 'Who are you travelling with?'
+							}
+						</h3>
+
+						<div class="mt-5 grid gap-3 sm:grid-cols-2">
+							{
+								groupOptions.map((option) => (
+									<label
+										class="cursor-pointer rounded-2xl border p-4 transition hover:border-[#173b2f]/35"
+										x-bind:class={`groupType === '${option.id}' ? 'border-[#173b2f] bg-[#f1dfc2]/55' : 'border-[#173b2f]/10 bg-white'`}
+									>
+										<input
+											type="radio"
+											name="groupType"
+											value={option.id}
+											x-model="groupType"
+											class="sr-only"
+										/>
+
+										<span
+											class="block text-lg font-semibold"
+											x-bind:class={`groupType === '${option.id}' ? 'text-[#173b2f]' : 'text-[#52685f]'`}
+										>
+											{option.label[lang]}
+										</span>
+
+										<span class="mt-2 block text-sm leading-6 text-[#52685f]">
+											{option.description[lang]}
+										</span>
+									</label>
+								))
+							}
+						</div>
+					</div>
+
+					<div class="mt-10 border-t border-[#173b2f]/10 pt-8">
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Krok 2' : 'Step 2'}
+						</p>
+
+						<h3 class="mt-2 text-2xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Na ile dni planujemy pobyt?'
+									: 'How many days should we plan?'
+							}
+						</h3>
+
+						<div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+							{
+								dayOptions.map((option) => (
+									<label
+										class="cursor-pointer rounded-full border px-5 py-3 text-center text-sm font-semibold transition hover:border-[#173b2f]/35"
+										x-bind:class={`days === '${option.id}' ? 'border-[#173b2f] bg-[#173b2f] text-white' : 'border-[#173b2f]/10 bg-white text-[#52685f]'`}
+									>
+										<input
+											type="radio"
+											name="days"
+											value={option.id}
+											x-model="days"
+											class="sr-only"
+										/>
+
+										<span>{option.label[lang]}</span>
+									</label>
+								))
+							}
+						</div>
+					</div>
+
+					<div class="mt-10 border-t border-[#173b2f]/10 pt-8">
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Krok 3' : 'Step 3'}
+						</p>
+
+						<h3 class="mt-2 text-2xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Jakie tempo lubisz?'
+									: 'What pace do you prefer?'
+							}
+						</h3>
+
+						<div class="mt-5 grid gap-3 sm:grid-cols-3">
+							{
+								paceOptions.map((option) => (
+									<label
+										class="cursor-pointer rounded-2xl border px-5 py-4 text-center text-sm font-semibold transition hover:border-[#173b2f]/35"
+										x-bind:class={`pace === '${option.id}' ? 'border-[#173b2f] bg-[#173b2f] text-white' : 'border-[#173b2f]/10 bg-white text-[#52685f]'`}
+									>
+										<input
+											type="radio"
+											name="pace"
+											value={option.id}
+											x-model="pace"
+											class="sr-only"
+										/>
+
+										<span>{option.label[lang]}</span>
+									</label>
+								))
+							}
+						</div>
+					</div>
+
+					<div class="mt-10 border-t border-[#173b2f]/10 pt-8">
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Krok 4' : 'Step 4'}
+						</p>
+
+						<h3 class="mt-2 text-2xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Jak będziecie się poruszać?'
+									: 'How will you get around?'
+							}
+						</h3>
+
+						<div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+							{
+								transportOptions.map((option) => (
+									<label
+										class="cursor-pointer rounded-full border px-5 py-3 text-center text-sm font-semibold transition hover:border-[#173b2f]/35"
+										x-bind:class={`transport === '${option.id}' ? 'border-[#173b2f] bg-[#173b2f] text-white' : 'border-[#173b2f]/10 bg-white text-[#52685f]'`}
+									>
+										<input
+											type="radio"
+											name="transport"
+											value={option.id}
+											x-model="transport"
+											class="sr-only"
+										/>
+
+										<span>{option.label[lang]}</span>
+									</label>
+								))
+							}
+						</div>
+					</div>
+
+					<div class="mt-10 border-t border-[#173b2f]/10 pt-8">
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Krok 5' : 'Step 5'}
+						</p>
+
+						<h3 class="mt-2 text-2xl font-semibold">
+							{
+								lang === 'pl'
+									? 'Co Was interesuje?'
+									: 'What are you interested in?'
+							}
+						</h3>
+
+						<div class="mt-5 flex flex-wrap gap-3">
+							{
+								interestOptions.map((option) => (
+									<label
+										class="cursor-pointer rounded-full border px-5 py-3 text-sm font-semibold transition hover:border-[#173b2f]/35"
+										x-bind:class={`interests.includes('${option.id}') ? 'border-[#173b2f] bg-[#173b2f] text-white' : 'border-[#173b2f]/10 bg-white text-[#52685f]'`}
+									>
+										<input
+											type="checkbox"
+											value={option.id}
+											x-model="interests"
+											class="sr-only"
+										/>
+
+										<span>{option.label[lang]}</span>
+									</label>
+								))
+							}
+						</div>
+					</div>
+
+					<div class="mt-10 border-t border-[#173b2f]/10 pt-8">
+						<div class="grid gap-3 sm:grid-cols-2">
+							<button
+								type="button"
+								class="rounded-full bg-[#173b2f] px-7 py-4 text-sm font-semibold text-white transition hover:bg-[#225846]"
+								x-bind:disabled="!(groupType && days && pace && transport)"
+								x-bind:class="!(groupType && days && pace && transport) ? 'opacity-50 cursor-not-allowed' : ''"
+								@click="if (groupType && days && pace && transport) showPlan = true"
+							>
+								{lang === 'pl' ? 'Ułóż plan pobytu' : 'Build stay plan'}
+							</button>
+
+							<button
+								type="button"
+								class="rounded-full border border-[#173b2f]/20 px-7 py-4 text-sm font-semibold text-[#173b2f] transition hover:border-[#173b2f]/45 hover:bg-[#f1dfc2]/45"
+								@click="resetPlan()"
+							>
+								{lang === 'pl' ? 'Resetuj plan' : 'Reset plan'}
+							</button>
+						</div>
+					</div>
+					<div
+						x-show="showPlan"
+						x-transition.opacity.duration.200ms
+						class="mt-10 rounded-[1.5rem] border border-[#173b2f]/10 bg-[#f7f1e8] p-6"
+					>
+						<p
+							class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+						>
+							{lang === 'pl' ? 'Propozycja planu' : 'Suggested plan'}
+						</p>
+
+						<h3 class="mt-3 text-2xl font-semibold">
+							{lang === 'pl' ? 'Twój plan pobytu' : 'Your stay plan'}
+						</h3>
+
+						<button
+							type="button"
+							class="mt-5 rounded-full bg-[#173b2f] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#225846]"
+							@click="downloadPdf()"
+						>
+							{lang === 'pl' ? 'Pobierz PDF' : 'Download PDF'}
+						</button>
+
+						<div class="mt-6 space-y-4">
+							<template x-for="day in Number(days)" :key="day">
+								<div
+									class="rounded-2xl bg-white p-5 shadow-sm shadow-[#173b2f]/5"
+								>
+									<p
+										class="text-sm font-semibold uppercase tracking-[0.18em] text-[#8a6f45]"
+									>
+										<span>{lang === 'pl' ? 'Dzień' : 'Day'}</span>
+										<span x-text="day"></span>
+									</p>
+
+									<div class="mt-4 space-y-3 text-sm leading-6 text-[#52685f]">
+										<template
+											x-for="attraction in getDayAttractions(day)"
+											:key="attraction.id"
+										>
+											<div class="rounded-xl border border-[#173b2f]/10 p-4">
+												<p
+													class="font-semibold text-[#173b2f]"
+													x-text="attraction.title"
+												>
+												</p>
+
+												<p class="mt-2" x-text="attraction.description"></p>
+
+												<p
+													class="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#8a6f45]"
+												>
+													<span x-text="attraction.location"></span>
+													<span> · </span>
+													<span
+														x-text="attraction.duration.minHours + '-' + attraction.duration.maxHours + 'h'"
+													></span>
+												</p>
+											</div>
+										</template>
+
+										<div
+											class="rounded-xl border border-[#173b2f]/10 bg-[#f1dfc2]/50 p-4"
+										>
+											<p class="font-semibold text-[#173b2f]">
+												{
+													lang === 'pl'
+														? 'Wieczór w ogrodzie U Kostka'
+														: 'Evening in the U Kostka garden'
+												}
+											</p>
+
+											<p class="mt-2">
+												{
+													lang === 'pl'
+														? 'Grill, odpoczynek i spokojne zakończenie dnia po atrakcjach.'
+														: 'Barbecue, rest and a calm end to the day after the attractions.'
+												}
+											</p>
+										</div>
+									</div>
+								</div>
+							</template>
+						</div>
+					</div>
+				</form>
+			</div>
+		</section>
+	</main>
+</Layout>

@@ -1,0 +1,105 @@
+---
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const content = {
+	pl: {
+		tagline: 'Kameralne pokoje 50 metrów od zalewu w Krasnobrodzie.',
+		nav: 'Menu',
+		contact: 'Kontakt',
+		location: '22-440 Krasnobród, Partyzantów 33',
+		rights: 'Wszystkie prawa zastrzeżone.',
+		links: [
+			{ label: 'Pokoje', href: '/pokoje' },
+			{ label: 'Galeria', href: '/galeria' },
+			{ label: 'Planer pobytu', href: '/planer' },
+			{ label: 'Atrakcje', href: '/atrakcje' },
+			{ label: 'Kontakt', href: '/kontakt' },
+			{ label: 'Polityka prywatności', href: '/polityka-prywatnosci' },
+		],
+	},
+	en: {
+		tagline: 'Cozy rooms 50 meters from the lagoon in Krasnobród.',
+		nav: 'Menu',
+		contact: 'Contact',
+		location: '22-440 Krasnobród, Partyzantów 33',
+		rights: 'All rights reserved.',
+		links: [
+			{ label: 'Rooms', href: '/en/rooms' },
+			{ label: 'Gallery', href: '/en/gallery' },
+			{ label: 'Stay planner', href: '/en/planner' },
+			{ label: 'Attractions', href: '/en/attractions' },
+			{ label: 'Contact', href: '/en/contact' },
+			{ label: 'Privacy Policy', href: '/en/privacy-policy' },
+		],
+	},
+};
+
+const t = content[lang];
+const year = new Date().getFullYear();
+const facebookHref = 'https://www.facebook.com/ukostkakrasnobrod/';
+---
+
+<footer class="bg-[#102a22] text-white">
+	<div
+		class="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.2fr_0.8fr_0.8fr]"
+	>
+		<div>
+			<a
+				href={lang === 'pl' ? '/' : '/en/'}
+				class="inline-flex items-center"
+				aria-label="U Kostka"
+			>
+				<img src="/images/logo.png" alt="U Kostka" class="h-14 w-auto" />
+			</a>
+
+			<p class="mt-5 max-w-sm text-sm leading-7 text-white/68">
+				{t.tagline}
+			</p>
+		</div>
+
+		<div>
+			<h2
+				class="text-sm font-semibold uppercase tracking-[0.22em] text-[#f1dfc2]"
+			>
+				{t.nav}
+			</h2>
+
+			<nav class="mt-5 flex flex-col gap-3 text-sm text-white/72">
+				{
+					t.links.map((link) => (
+						<a href={link.href} class="transition hover:text-white">
+							{link.label}
+						</a>
+					))
+				}
+			</nav>
+		</div>
+
+		<div>
+			<h2
+				class="text-sm font-semibold uppercase tracking-[0.22em] text-[#f1dfc2]"
+			>
+				{t.contact}
+			</h2>
+
+			<div class="mt-5 space-y-3 text-sm text-white/72">
+				<p>{t.location}</p>
+				<a href="tel:+48514277002" class="block transition hover:text-white">
+					+48 514 277 002
+				</a>
+				<a
+					href={facebookHref}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="block transition hover:text-white"
+				>
+					Facebook
+				</a>
+			</div>
+		</div>
+	</div>
+</footer>

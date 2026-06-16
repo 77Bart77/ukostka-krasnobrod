@@ -1,0 +1,240 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const content = {
+	pl: {
+		metaTitle: 'Polityka prywatności | U Kostka Krasnobród',
+		metaDescription:
+			'Polityka prywatności strony U Kostka Krasnobród.',
+		kicker: 'Polityka prywatności',
+		title: 'Polityka prywatności',
+		updated: 'Ostatnia aktualizacja: 16 czerwca 2026 r.',
+	},
+	en: {
+		metaTitle: 'Privacy Policy | U Kostka Krasnobród',
+		metaDescription:
+			'Privacy policy for the U Kostka Krasnobród website.',
+		kicker: 'Privacy Policy',
+		title: 'Privacy Policy',
+		updated: 'Last updated: June 16, 2026',
+	},
+};
+
+const t = content[lang];
+---
+
+<Layout
+	lang={lang}
+	langHref={lang === 'pl' ? '/en/privacy-policy' : '/polityka-prywatnosci'}
+	title={t.metaTitle}
+	description={t.metaDescription}
+>
+	<main class="bg-[#f7f1e8] text-[#173b2f]">
+		<section class="bg-[#173b2f] pt-36 text-white">
+			<div class="mx-auto max-w-6xl px-6 pb-16 pt-12">
+				<p class="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-[#f1dfc2]">
+					{t.kicker}
+				</p>
+
+				<h1 class="max-w-4xl text-5xl font-semibold leading-[1.04] md:text-6xl">
+					{t.title}
+				</h1>
+
+				<p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+					{t.updated}
+				</p>
+			</div>
+		</section>
+
+		<section class="mx-auto max-w-4xl px-6 py-16 md:py-20">
+			<div class="rounded-[1.5rem] bg-white p-8 leading-8 shadow-xl shadow-[#173b2f]/8 md:p-10">
+				{lang === 'pl' ? (
+					<div class="space-y-8">
+						<section>
+	<h2 class="text-2xl font-semibold">1. Administrator danych</h2>
+	<p class="mt-4 text-[#52685f]">
+		Administratorem danych jest właściciel obiektu U Kostka Krasnobród.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		U Kostka Krasnobród<br />
+		ul. Partyzantów 33<br />
+		22-440 Krasnobród
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		Telefon: 514 277 002<br />
+		Facebook: U Kostka Krasnobród
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">2. Zakres danych</h2>
+	<p class="mt-4 text-[#52685f]">
+		Strona internetowa nie posiada formularza kontaktowego, systemu rezerwacji online ani kont użytkowników.
+		Kontakt z obiektem odbywa się telefonicznie lub przez Facebook/Messenger.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		Dane przekazane podczas rozmowy telefonicznej albo wiadomości na Facebooku są wykorzystywane wyłącznie
+		w celu odpowiedzi na zapytanie oraz ustalenia szczegółów pobytu.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">3. Pliki cookies</h2>
+	<p class="mt-4 text-[#52685f]">
+		Strona nie używa cookies marketingowych ani analitycznych. Nie korzystamy z Google Analytics,
+		Meta Pixel ani podobnych narzędzi śledzących.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		Nie wyświetlamy banera cookies, ponieważ strona nie zapisuje cookies wymagających zgody użytkownika.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">4. Usługi zewnętrzne</h2>
+	<p class="mt-4 text-[#52685f]">
+		Strona może zawierać linki do usług zewnętrznych, takich jak Facebook oraz Google Maps.
+		Kliknięcie linku do Facebooka lub Google Maps powoduje przejście do zewnętrznej strony internetowej,
+		która działa według własnych zasad prywatności.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		Jeśli na stronie wyświetlana jest osadzona mapa Google, przeglądarka może połączyć się z serwerami Google
+		w celu jej załadowania.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">5. Logi techniczne</h2>
+	<p class="mt-4 text-[#52685f]">
+		Podczas korzystania ze strony dostawca hostingu może automatycznie zapisywać podstawowe dane techniczne,
+		takie jak adres IP, data i godzina odwiedzin, typ przeglądarki lub adres odwiedzanej podstrony.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		Dane te służą wyłącznie do zapewnienia poprawnego działania strony, bezpieczeństwa oraz diagnostyki technicznej.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">6. Cel przetwarzania danych</h2>
+	<p class="mt-4 text-[#52685f]">
+		Dane przekazane telefonicznie lub przez Facebook/Messenger mogą być wykorzystywane w celu odpowiedzi na zapytanie,
+		ustalenia dostępności terminu, kontaktu w sprawie pobytu oraz obsługi rezerwacji uzgodnionej poza stroną internetową.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">7. Prawa użytkownika</h2>
+	<p class="mt-4 text-[#52685f]">
+		Osoba, której dane dotyczą, ma prawo do dostępu do swoich danych, sprostowania danych, usunięcia danych,
+		ograniczenia przetwarzania oraz wniesienia sprzeciwu wobec przetwarzania.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		W celu skorzystania z tych praw można skontaktować się telefonicznie z obiektem.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">8. Zmiany polityki prywatności</h2>
+	<p class="mt-4 text-[#52685f]">
+		Polityka prywatności może być aktualizowana, jeśli zmieni się sposób działania strony lub wykorzystywane usługi zewnętrzne.
+	</p>
+</section>
+					</div>
+				) : (
+					<div class="space-y-8">
+						<section>
+	<h2 class="text-2xl font-semibold">1. Data controller</h2>
+	<p class="mt-4 text-[#52685f]">
+		The data controller is the owner of the U Kostka Krasnobród accommodation property.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		U Kostka Krasnobród<br />
+		Partyzantów 33<br />
+		22-440 Krasnobród, Poland
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		Phone: 514 277 002<br />
+		Facebook: U Kostka Krasnobród
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">2. Scope of data</h2>
+	<p class="mt-4 text-[#52685f]">
+		The website does not include a contact form, an online booking system or user accounts.
+		Contact with the property takes place by phone or through Facebook/Messenger.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		Data provided during a phone call or Facebook message is used only to answer the inquiry and arrange stay details.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">3. Cookies</h2>
+	<p class="mt-4 text-[#52685f]">
+		The website does not use marketing or analytics cookies. We do not use Google Analytics,
+		Meta Pixel or similar tracking tools.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		We do not display a cookie banner because the website does not store cookies that require user consent.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">4. External services</h2>
+	<p class="mt-4 text-[#52685f]">
+		The website may contain links to external services such as Facebook and Google Maps.
+		Clicking a Facebook or Google Maps link opens an external website that operates under its own privacy rules.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		If an embedded Google Map is displayed on the website, the browser may connect to Google servers in order to load it.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">5. Technical logs</h2>
+	<p class="mt-4 text-[#52685f]">
+		When using the website, the hosting provider may automatically store basic technical data,
+		such as IP address, date and time of visit, browser type or visited page address.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		This data is used only to ensure proper website operation, security and technical diagnostics.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">6. Purpose of data processing</h2>
+	<p class="mt-4 text-[#52685f]">
+		Data provided by phone or through Facebook/Messenger may be used to answer an inquiry,
+		check date availability, contact the guest about the stay and handle a reservation arranged outside the website.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">7. User rights</h2>
+	<p class="mt-4 text-[#52685f]">
+		The data subject has the right to access, correct, delete or restrict the processing of their data,
+		as well as the right to object to processing.
+	</p>
+	<p class="mt-4 text-[#52685f]">
+		To exercise these rights, please contact the property by phone.
+	</p>
+</section>
+
+<section>
+	<h2 class="text-2xl font-semibold">8. Changes to this privacy policy</h2>
+	<p class="mt-4 text-[#52685f]">
+		This privacy policy may be updated if the way the website works or the external services used on it change.
+	</p>
+</section>
+					</div>
+				)}
+			</div>
+		</section>
+	</main>
+</Layout>

@@ -1,0 +1,397 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const content = {
+	pl: {
+		metaTitle: 'Galeria | U Kostka Krasnobrod',
+		metaDescription:
+			'Galeria zdjec obiektow, pokoi, ogrodu i okolicy U Kostka w Krasnobrodzie.',
+		kicker: 'Galeria / Krasnobrod',
+		title: 'Zobacz miejsce przed przyjazdem',
+		description:
+			'Zdjecia pokazuja pokoje, dwa obiekty, ogrod z miejscem do odpoczynku oraz okolice zalewu oddalonego o okolo 50 metrow.',
+		all: 'Wszystkie',
+		categories: {
+			buildings: 'Obiekty',
+			rooms: 'Pokoje',
+			garden: 'Ogrod',
+			area: 'Okolica',
+		},
+		close: 'Zamknij',
+		previous: 'Poprzednie zdjecie',
+		next: 'Nastepne zdjecie',
+	},
+	en: {
+		metaTitle: 'Gallery | U Kostka Krasnobrod',
+		metaDescription:
+			'Photo gallery of the buildings, rooms, garden and surroundings at U Kostka in Krasnobrod.',
+		kicker: 'Gallery / Krasnobrod',
+		title: 'See the place before you arrive',
+		description:
+			'Photos show the rooms, two guesthouse buildings, garden relaxation areas and the lagoon surroundings about 50 meters away.',
+		all: 'All',
+		categories: {
+			buildings: 'Buildings',
+			rooms: 'Rooms',
+			garden: 'Garden',
+			area: 'Area',
+		},
+		close: 'Close',
+		previous: 'Previous photo',
+		next: 'Next photo',
+	},
+};
+
+const t = content[lang];
+
+const images = [
+	{
+		src: '/images/rooms/obiekt1_front.png',
+		category: 'buildings',
+		title: lang === 'pl' ? 'Obiekt pierwszy' : 'First building',
+		alt:
+			lang === 'pl'
+				? 'Front pierwszego obiektu U Kostka'
+				: 'Front of the first U Kostka building',
+	},
+	{
+		src: '/images/rooms/obiekt2_front.png',
+		category: 'buildings',
+		title: lang === 'pl' ? 'Obiekt drugi' : 'Second building',
+		alt:
+			lang === 'pl'
+				? 'Front drugiego obiektu U Kostka'
+				: 'Front of the second U Kostka building',
+	},
+	{
+		src: '/images/rooms/obiekt2.png',
+		category: 'buildings',
+		title: lang === 'pl' ? 'Drugi budynek' : 'Second guesthouse',
+		alt:
+			lang === 'pl' ? 'Drugi budynek noclegowy' : 'Second guesthouse building',
+	},
+	{
+		src: '/images/rooms/obiekt1_pokoj1.png',
+		category: 'rooms',
+		title: lang === 'pl' ? 'Pokoj w obiekcie I' : 'Room in building I',
+		alt:
+			lang === 'pl'
+				? 'Pokoj w pierwszym obiekcie'
+				: 'Room in the first building',
+	},
+	{
+		src: '/images/rooms/obiekt1_pokoj2.png',
+		category: 'rooms',
+		title: lang === 'pl' ? 'Pokoj dwuosobowy' : 'Twin room',
+		alt: lang === 'pl' ? 'Pokoj dwuosobowy U Kostka' : 'Twin room at U Kostka',
+	},
+	{
+		src: '/images/rooms/obiekt2_pokoj.png',
+		category: 'rooms',
+		title: lang === 'pl' ? 'Pokoj w obiekcie II' : 'Room in building II',
+		alt:
+			lang === 'pl' ? 'Pokoj w drugim obiekcie' : 'Room in the second building',
+	},
+	{
+		src: '/images/rooms/obiekt1_kuchnia.png',
+		category: 'rooms',
+		title: lang === 'pl' ? 'Kuchnia w obiekcie I' : 'Kitchen in building I',
+		alt:
+			lang === 'pl'
+				? 'Kuchnia dostepna dla gosci w pierwszym obiekcie'
+				: 'Guest kitchen in the first building',
+	},
+	{
+		src: '/images/rooms/obiekt2_kuchnia.png',
+		category: 'rooms',
+		title: lang === 'pl' ? 'Aneks kuchenny' : 'Kitchen area',
+		alt:
+			lang === 'pl'
+				? 'Aneks kuchenny w drugim obiekcie'
+				: 'Kitchen area in the second building',
+	},
+	{
+		src: '/images/rooms/obiekt2_jadalnia.png',
+		category: 'rooms',
+		title: lang === 'pl' ? 'Jadalnia' : 'Dining area',
+		alt:
+			lang === 'pl'
+				? 'Jadalnia w drugim obiekcie'
+				: 'Dining area in the second building',
+	},
+	{
+		src: '/images/rooms/ogrod1.png',
+		category: 'garden',
+		title: lang === 'pl' ? 'Ogrod' : 'Garden',
+		alt: lang === 'pl' ? 'Ogrod przy obiekcie' : 'Garden at the property',
+	},
+	{
+		src: '/images/rooms/plac_zabaw1.png',
+		category: 'garden',
+		title: lang === 'pl' ? 'Plac zabaw' : 'Playground',
+		alt: lang === 'pl' ? 'Plac zabaw dla dzieci' : 'Children playground',
+	},
+	{
+		src: '/images/rooms/piaskownica.png',
+		category: 'garden',
+		title: lang === 'pl' ? 'Piaskownica' : 'Sandpit',
+		alt: lang === 'pl' ? 'Piaskownica w ogrodzie' : 'Sandpit in the garden',
+	},
+	{
+		src: '/images/rooms/wiata_dom_obiekt1.png',
+		category: 'garden',
+		title: lang === 'pl' ? 'Wiata przy obiekcie' : 'Garden shelter',
+		alt:
+			lang === 'pl'
+				? 'Wiata wypoczynkowa przy pierwszym obiekcie'
+				: 'Garden shelter by the first building',
+	},
+	{
+		src: '/images/rooms/wiata2_wieczór.png',
+		category: 'garden',
+		title: lang === 'pl' ? 'Wieczor w ogrodzie' : 'Evening in the garden',
+		alt:
+			lang === 'pl'
+				? 'Oswietlona wiata wieczorem'
+				: 'Lit garden shelter in the evening',
+	},
+	{
+		src: '/images/rooms/wiata3_wieczór.png',
+		category: 'garden',
+		title: lang === 'pl' ? 'Strefa odpoczynku' : 'Relaxation area',
+		alt:
+			lang === 'pl'
+				? 'Wieczorna strefa odpoczynku przy obiekcie'
+				: 'Evening relaxation area at the property',
+	},
+	{
+		src: '/images/rooms/zalew_wieczor.png',
+		category: 'area',
+		title: lang === 'pl' ? 'Zalew wieczorem' : 'Lagoon in the evening',
+		alt:
+			lang === 'pl'
+				? 'Zalew w Krasnobrodzie wieczorem'
+				: 'Krasnobrod lagoon in the evening',
+	},
+	{
+		src: '/images/zalew.png',
+		category: 'area',
+		title: lang === 'pl' ? 'Nad zalewem' : 'By the lagoon',
+		alt:
+			lang === 'pl'
+				? 'Zalew w Krasnobrodzie blisko obiektu'
+				: 'Krasnobrod lagoon near the property',
+	},
+];
+
+const categoryList = [
+	{ id: 'all', label: t.all },
+	{ id: 'buildings', label: t.categories.buildings },
+	{ id: 'rooms', label: t.categories.rooms },
+	{ id: 'garden', label: t.categories.garden },
+	{ id: 'area', label: t.categories.area },
+];
+
+const state = `{
+	category: 'all',
+	activeIndex: null,
+	images: ${JSON.stringify(images)},
+	open(index) {
+		this.activeIndex = index;
+		document.body.classList.add('overflow-hidden');
+	},
+	close() {
+		this.activeIndex = null;
+		document.body.classList.remove('overflow-hidden');
+	},
+	next() {
+		this.activeIndex = (this.activeIndex + 1) % this.images.length;
+	},
+	previous() {
+		this.activeIndex = (this.activeIndex - 1 + this.images.length) % this.images.length;
+	}
+}`;
+---
+
+<Layout
+	lang={lang}
+	langHref={lang === 'pl' ? '/en/gallery' : '/galeria'}
+	title={t.metaTitle}
+	description={t.metaDescription}
+>
+	<main
+		class="bg-[#f7f1e8] text-[#173b2f]"
+		x-data={state}
+		@keydown.escape.window="close()"
+		@keydown.arrow-right.window="activeIndex !== null && next()"
+		@keydown.arrow-left.window="activeIndex !== null && previous()"
+	>
+		<section class="relative overflow-hidden bg-[#173b2f] pt-36 text-white">
+			<div class="absolute inset-0">
+				<img
+					src="/images/rooms/wiata2_wieczór.png"
+					alt=""
+					class="h-full w-full object-cover opacity-[0.34]"
+				/>
+				<div
+					class="absolute inset-0 bg-gradient-to-br from-[#173b2f] via-[#173b2f]/86 to-[#8a6f45]/68"
+				>
+				</div>
+			</div>
+
+			<div class="relative mx-auto max-w-6xl px-6 pb-20 pt-12">
+				<p
+					class="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-[#f1dfc2]"
+				>
+					{t.kicker}
+				</p>
+
+				<h1 class="max-w-4xl text-5xl font-semibold leading-[1.04] md:text-6xl">
+					{t.title}
+				</h1>
+
+				<p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+					{t.description}
+				</p>
+			</div>
+		</section>
+
+		<section class="border-b border-[#173b2f]/10 bg-[#f1dfc2]">
+			<div class="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-6 py-5">
+				{
+					categoryList.map((category) => (
+						<button
+							type="button"
+							class="whitespace-nowrap rounded-full border border-[#173b2f]/12 px-5 py-3 text-sm font-semibold text-[#173b2f] transition hover:border-[#173b2f]/35"
+							x-bind:class={`category === '${category.id}' ? 'bg-[#173b2f] text-white' : 'bg-white/45'`}
+							@click={`category = '${category.id}'`}
+						>
+							{category.label}
+						</button>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="mx-auto max-w-6xl px-6 py-16 md:py-20">
+			<div class="grid auto-rows-[220px] gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				{
+					images.map((image, index) => (
+						<button
+							type="button"
+							class:list={[
+								'group relative overflow-hidden rounded-[1.5rem] bg-[#173b2f] text-left shadow-lg shadow-[#173b2f]/10',
+								index === 0 || index === 10 || index === 15
+									? 'sm:row-span-2'
+									: '',
+							]}
+							x-show={`category === 'all' || category === '${image.category}'`}
+							x-transition.opacity.duration.180ms
+							@click={`open(${index})`}
+						>
+							<img
+								src={image.src}
+								alt={image.alt}
+								loading={index > 2 ? 'lazy' : 'eager'}
+								class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+							/>
+							<span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5 pt-16">
+								<span class="block text-base font-semibold text-white">
+									{image.title}
+								</span>
+								<span class="mt-1 block text-xs font-semibold uppercase tracking-[0.18em] text-[#f1dfc2]">
+									{
+										categoryList.find(
+											(category) => category.id === image.category,
+										)?.label
+									}
+								</span>
+							</span>
+						</button>
+					))
+				}
+			</div>
+		</section>
+
+		<div
+			x-show="activeIndex !== null"
+			x-transition.opacity.duration.180ms
+			class="fixed inset-0 z-[80] overflow-y-auto bg-[#07130f]/94 p-4 text-white"
+			@click.self="close()"
+		>
+			<div class="mx-auto flex h-full max-w-6xl flex-col">
+				<div class="flex items-center justify-between gap-4 py-3">
+					<div>
+						<p
+							class="text-lg font-semibold"
+							x-text="images[activeIndex]?.title"
+						>
+						</p>
+						<p class="text-sm text-white/64" x-text="images[activeIndex]?.alt">
+						</p>
+					</div>
+
+					<button
+						type="button"
+						class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-2xl leading-none transition hover:border-white"
+						aria-label={t.close}
+						@click="close()"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div
+					class="grid min-h-0 flex-1 grid-cols-[auto_1fr_auto] items-center gap-3"
+				>
+					<button
+						type="button"
+						class="hidden h-12 w-12 items-center justify-center rounded-full border border-white/20 text-3xl transition hover:border-white sm:inline-flex"
+						aria-label={t.previous}
+						@click="previous()"
+					>
+						<span aria-hidden="true">&#8249;</span>
+					</button>
+
+					<img
+						:src="images[activeIndex]?.src"
+						:alt="images[activeIndex]?.alt"
+						class="mx-auto max-h-[78vh] max-w-full rounded-[1.5rem] object-contain"
+					/>
+
+					<button
+						type="button"
+						class="hidden h-12 w-12 items-center justify-center rounded-full border border-white/20 text-3xl transition hover:border-white sm:inline-flex"
+						aria-label={t.next}
+						@click="next()"
+					>
+						<span aria-hidden="true">&#8250;</span>
+					</button>
+				</div>
+
+				<div class="grid grid-cols-2 gap-3 py-3 sm:hidden">
+					<button
+						type="button"
+						class="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold"
+						@click="previous()"
+					>
+						{t.previous}
+					</button>
+					<button
+						type="button"
+						class="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold"
+						@click="next()"
+					>
+						{t.next}
+					</button>
+				</div>
+			</div>
+		</div>
+	</main>
+</Layout>

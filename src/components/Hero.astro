@@ -1,0 +1,112 @@
+---
+interface Props {
+	lang?: 'pl' | 'en';
+}
+import WeatherWidget from './WeatherWidget.astro';
+const { lang = 'pl' } = Astro.props;
+
+const content = {
+	pl: {
+		kicker: 'Krasnobród / 50 m od zalewu',
+		title: 'Obudź się 50 metrów od zalewu',
+		description:
+			'Kameralne pokoje blisko wody, lasu i Roztocza. Zaplanuj spokojny pobyt z plażą, spacerami i wieczornym odpoczynkiem.',
+		primaryCta: 'Zaplanuj pobyt',
+		secondaryCta: 'Zapytaj o termin',
+		distance: '50 m',
+		distanceLabel: 'od zalewu',
+		mood: 'spokój, woda, Roztocze',
+	},
+	en: {
+		kicker: 'Krasnobród / 50 m from the lagoon',
+		title: 'Wake up 50 meters from the water',
+		description:
+			'Cozy rooms close to the lagoon, forest and Roztocze. Plan a quiet stay with beach time, walks and slow evenings.',
+		primaryCta: 'Plan your stay',
+		secondaryCta: 'Ask about dates',
+		distance: '50 m',
+		distanceLabel: 'from the lagoon',
+		mood: 'quiet, water, Roztocze',
+	},
+};
+
+const t = content[lang];
+---
+
+<section
+	class="relative isolate min-h-screen overflow-hidden bg-[#173b2f] text-white"
+>
+	<div
+		class="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(241,223,194,0.34),transparent_34%),linear-gradient(135deg,rgba(23,59,47,0.96),rgba(23,59,47,0.52)_42%,rgba(138,111,69,0.62))]"
+	>
+	</div>
+
+	<div
+		class="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#f7f1e8] to-transparent"
+	>
+	</div>
+
+	<div
+		class="relative mx-auto grid min-h-screen max-w-6xl items-center gap-12 px-6 pb-20 pt-40 lg:grid-cols-[1.08fr_0.92fr] lg:pt-36"
+	>
+		<div>
+			<p
+				class="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-[#f1dfc2]"
+			>
+				{t.kicker}
+			</p>
+
+			<h1 class="max-w-4xl text-5xl font-semibold leading-[1.04] md:text-7xl">
+				{t.title}
+			</h1>
+
+			<p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+				{t.description}
+			</p>
+
+			<div class="mt-10 flex flex-col gap-4 sm:flex-row">
+				<a
+					href={lang === 'pl' ? '/planer' : '/en/planner'}
+					class="inline-flex justify-center rounded-full bg-[#f1dfc2] px-7 py-4 text-sm font-semibold text-[#173b2f] transition hover:bg-white"
+				>
+					{t.primaryCta}
+				</a>
+
+				<a
+					href={lang === 'pl' ? '/kontakt' : '/en/contact'}
+					class="inline-flex justify-center rounded-full border border-white/25 px-7 py-4 text-sm font-semibold text-white transition hover:border-white"
+				>
+					{t.secondaryCta}
+				</a>
+			</div>
+		</div>
+
+		<div class="relative">
+			<div
+				class="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/16 bg-[#173b2f] shadow-2xl shadow-black/25"
+			>
+				<img
+					src="/images/zalew.png"
+					alt="Zalew w Krasnobrodzie"
+					class="h-full w-full object-cover"
+				/>
+
+				<div
+					class="absolute inset-0 bg-gradient-to-t from-[#102a22]/82 via-[#102a22]/20 to-transparent"
+				>
+				</div>
+
+				<div class="absolute inset-0 flex flex-col justify-between p-8">
+					<WeatherWidget lang={lang} />
+
+					<div>
+						<p class="max-w-xs text-2xl font-medium leading-tight text-white">
+							{t.mood}
+						</p>
+						<div class="mt-6 h-1.5 w-28 rounded-full bg-[#f1dfc2]"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

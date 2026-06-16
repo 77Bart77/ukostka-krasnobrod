@@ -1,0 +1,242 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { attractions } from '../data/attractions';
+
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const content = {
+	pl: {
+		metaTitle: 'Atrakcje | U Kostka Krasnobrod',
+		metaDescription:
+			'Atrakcje blisko U Kostka w Krasnobrodzie oraz wycieczki po Roztoczu na rodzinny pobyt, weekend i wakacje.',
+		kicker: 'Atrakcje / Krasnobrod',
+		title: 'Co zobaczyc w Krasnobrodzie i okolicy',
+		description:
+			'Nie trzeba planowac wszystkiego od zera. Wybralismy miejsca, ktore najlepiej pasuja do pobytu blisko zalewu: spacery, woda, widoki, atrakcje dla dzieci i wycieczki po Roztoczu.',
+		localTitle: 'Blisko U Kostka',
+		localDescription:
+			'Najprostsze propozycje na pierwszy dzien, spokojny poranek albo krotki wypad bez dlugiego dojazdu.',
+		tripTitle: 'Wycieczki po Roztoczu',
+		tripDescription:
+			'Kilka mocniejszych punktow na pol dnia albo calodniowy wyjazd samochodem.',
+		onSiteTitle: 'Na miejscu',
+		onSiteDescription:
+			'Po atrakcjach mozna odpoczac w ogrodzie, przygotowac grilla i zostac blisko pokoju.',
+		plannerCta: 'Uloz plan pobytu',
+		distanceLabel: 'Czas',
+		onSiteItems: [
+			'Miejsce na grilla',
+			'Wiaty i ogrod do odpoczynku',
+			'Plac zabaw dla dzieci',
+			'Blisko zalewu i spacerow',
+		],
+	},
+	en: {
+		metaTitle: 'Attractions | U Kostka Krasnobrod',
+		metaDescription:
+			'Attractions near U Kostka in Krasnobrod and day trips around Roztocze for families, weekends and holidays.',
+		kicker: 'Attractions / Krasnobrod',
+		title: 'What to see in Krasnobrod and nearby',
+		description:
+			'You do not need to plan everything from scratch. We selected places that fit a stay close to the lagoon: walks, water, views, children-friendly stops and Roztocze trips.',
+		localTitle: 'Close to U Kostka',
+		localDescription:
+			'Easy ideas for the first day, a calm morning or a short trip without a long drive.',
+		tripTitle: 'Trips around Roztocze',
+		tripDescription:
+			'A few stronger options for a half-day or full-day car trip.',
+		onSiteTitle: 'On site',
+		onSiteDescription:
+			'After a day out, guests can rest in the garden, prepare a barbecue and stay close to the room.',
+		plannerCta: 'Build stay plan',
+		distanceLabel: 'Time',
+		onSiteItems: [
+			'Barbecue area',
+			'Garden shelters and outdoor rest space',
+			'Children playground',
+			'Close to the lagoon and walking routes',
+		],
+	},
+};
+
+const localAttractionIds = [
+	'zalew-krasnobrod',
+	'kamieniolom-baszta-krasnobrod',
+	'kaplica-sw-rocha',
+	'kaplica-na-wodzie-krasnobrod',
+	'park-linowy-krasnobrod',
+	'trasy-krasnobrod',
+	'wedkowanie-z-gospodarzem',
+];
+
+const tripAttractionIds = [
+	'zwierzyniec-stawy-echo',
+	'susiec-szumy-nad-tanwia',
+	'czartowe-pole',
+	'zamosc-stare-miasto',
+	'zagroda-guciow',
+];
+
+const t = content[lang];
+const getAttractions = (ids: string[]) =>
+	ids
+		.map((id) => attractions.find((attraction) => attraction.id === id))
+		.filter((attraction) => attraction !== undefined);
+
+const localAttractions = getAttractions(localAttractionIds);
+const tripAttractions = getAttractions(tripAttractionIds);
+const plannerHref = lang === 'pl' ? '/planer' : '/en/planner';
+---
+
+<Layout
+	lang={lang}
+	langHref={lang === 'pl' ? '/en/attractions' : '/atrakcje'}
+	title={t.metaTitle}
+	description={t.metaDescription}
+>
+	<main class="bg-[#f7f1e8] text-[#173b2f]">
+		<section class="bg-[#173b2f] pt-36 text-white">
+			<div class="mx-auto max-w-6xl px-6 pb-20 pt-12">
+				<p
+					class="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-[#f1dfc2]"
+				>
+					{t.kicker}
+				</p>
+
+				<h1 class="max-w-4xl text-5xl font-semibold leading-[1.04] md:text-6xl">
+					{t.title}
+				</h1>
+
+				<p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+					{t.description}
+				</p>
+
+				<a
+					href={plannerHref}
+					class="mt-10 inline-flex rounded-full bg-[#f1dfc2] px-7 py-4 text-sm font-semibold text-[#173b2f] transition hover:bg-white"
+				>
+					{t.plannerCta}
+				</a>
+			</div>
+		</section>
+
+		<section class="border-b border-[#173b2f]/10 bg-[#f1dfc2]">
+			<div class="mx-auto grid max-w-6xl gap-4 px-6 py-6 md:grid-cols-4">
+				{
+					t.onSiteItems.map((item) => (
+						<div class="rounded-2xl bg-white/45 px-5 py-4 text-center text-sm font-semibold">
+							{item}
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="mx-auto max-w-6xl px-6 py-16 md:py-20">
+			<div class="max-w-3xl">
+				<p
+					class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+				>
+					{t.localTitle}
+				</p>
+				<h2 class="mt-4 text-4xl font-semibold md:text-5xl">
+					{t.localTitle}
+				</h2>
+				<p class="mt-5 leading-8 text-[#52685f]">
+					{t.localDescription}
+				</p>
+			</div>
+
+			<div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+				{
+					localAttractions.map((attraction) => (
+						<article class="rounded-2xl bg-white p-6 shadow-lg shadow-[#173b2f]/6">
+							<p class="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a6f45]">
+								{attraction.location}
+							</p>
+							<h3 class="mt-3 text-xl font-semibold">
+								{attraction.title[lang]}
+							</h3>
+							<p class="mt-3 text-sm leading-6 text-[#52685f]">
+								{attraction.description[lang]}
+							</p>
+							<p class="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-[#8a6f45]">
+								{t.distanceLabel}: {attraction.duration.minHours}-
+								{attraction.duration.maxHours}h
+							</p>
+						</article>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="bg-white/50">
+			<div class="mx-auto max-w-6xl px-6 py-16 md:py-20">
+				<div class="max-w-3xl">
+					<p
+						class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+					>
+						{t.tripTitle}
+					</p>
+					<h2 class="mt-4 text-4xl font-semibold md:text-5xl">
+						{t.tripTitle}
+					</h2>
+					<p class="mt-5 leading-8 text-[#52685f]">
+						{t.tripDescription}
+					</p>
+				</div>
+
+				<div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+					{
+						tripAttractions.map((attraction) => (
+							<article class="rounded-2xl border border-[#173b2f]/10 bg-[#f7f1e8] p-6">
+								<p class="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a6f45]">
+									{attraction.location}
+								</p>
+								<h3 class="mt-3 text-xl font-semibold">
+									{attraction.title[lang]}
+								</h3>
+								<p class="mt-3 text-sm leading-6 text-[#52685f]">
+									{attraction.description[lang]}
+								</p>
+								<p class="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-[#8a6f45]">
+									{t.distanceLabel}: {attraction.duration.minHours}-
+									{attraction.duration.maxHours}h
+								</p>
+							</article>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<section class="mx-auto max-w-6xl px-6 py-16 md:py-20">
+			<div class="rounded-[1.5rem] bg-[#173b2f] p-8 text-white md:p-10">
+				<p
+					class="text-sm font-semibold uppercase tracking-[0.22em] text-[#f1dfc2]"
+				>
+					{t.onSiteTitle}
+				</p>
+				<h2 class="mt-4 max-w-2xl text-3xl font-semibold md:text-4xl">
+					{t.onSiteTitle}
+				</h2>
+				<p class="mt-5 max-w-2xl leading-8 text-white/72">
+					{t.onSiteDescription}
+				</p>
+				<div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+					{
+						t.onSiteItems.map((item) => (
+							<div class="rounded-2xl bg-white/8 px-5 py-4 text-sm font-semibold text-white/86">
+								{item}
+							</div>
+						))
+					}
+				</div>
+			</div>
+		</section>
+	</main>
+</Layout>

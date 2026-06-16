@@ -1,0 +1,141 @@
+---
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const labels = {
+	pl: {
+		current: 'Aktualnie w Krasnobrodzie',
+		loading: 'Ladowanie...',
+		unavailable: 'Pogoda niedostepna',
+		apparent: 'Odczuwalna:',
+		wind: 'Wiatr:',
+		rain: 'Pada deszcz, dobry czas na spokojniejszy plan.',
+		sunDay: 'Slonecznie, idealnie na zalew i spacer.',
+		sunNight: 'Pogodny wieczor nad zalewem.',
+		cloudLight: 'Ladna pogoda z lekkim zachmurzeniem.',
+		cloud: 'Pochmurno, dobre warunki na spacer lub zwiedzanie.',
+		fog: 'Mglisto, dobry klimat na spokojny poranek.',
+		showers: 'Mozliwe opady, warto miec plan pod dachem.',
+		winter: 'Zimowa pogoda, planuj krotsze spacery.',
+		storm: 'Burzowo, lepiej wybrac spokojne atrakcje pod dachem.',
+		default: 'Sprawdz pogode i zaplanuj dzien po swojemu.',
+	},
+	en: {
+		current: 'Current weather in Krasnobrod',
+		loading: 'Loading...',
+		unavailable: 'Weather unavailable',
+		apparent: 'Feels like:',
+		wind: 'Wind:',
+		rain: 'Rainy now, a calmer plan may work better.',
+		sunDay: 'Sunny, perfect for the lagoon and a walk.',
+		sunNight: 'A clear evening by the lagoon.',
+		cloudLight: 'Good weather with light cloud cover.',
+		cloud: 'Cloudy, still good for a walk or sightseeing.',
+		fog: 'Foggy, good atmosphere for a calm morning.',
+		showers: 'Possible showers, worth having an indoor option.',
+		winter: 'Winter weather, plan shorter walks.',
+		storm: 'Stormy, better to choose calm indoor attractions.',
+		default: 'Check the weather and plan the day your way.',
+	},
+};
+
+const t = labels[lang];
+---
+
+<div
+	class="rounded-3xl bg-white/14 p-5 text-white backdrop-blur-md"
+	x-data={`weatherWidget(${JSON.stringify(t)})`}
+	x-init="loadWeather()"
+>
+	<p class="text-sm uppercase tracking-[0.22em] text-white/70">
+		{t.current}
+	</p>
+
+	<div class="mt-3" x-show="loading">
+		<p class="text-2xl font-semibold">{t.loading}</p>
+	</div>
+
+	<div class="mt-3" x-show="!loading && error">
+		<p class="text-lg font-semibold">{t.unavailable}</p>
+	</div>
+
+	<div class="mt-3" x-show="!loading && !error">
+		<p class="text-6xl font-semibold">
+			<span x-text="temperature"></span>°C
+		</p>
+
+		<p class="mt-2 text-sm text-white/75" x-text="summary"></p>
+
+		<p class="mt-4 text-sm text-white/65">
+			{t.apparent}
+			<span x-text="apparentTemperature"></span>°C
+			<span class="mx-2">/</span>
+			{t.wind}
+			<span x-text="windSpeed"></span> km/h
+		</p>
+	</div>
+</div>
+
+<script>
+	document.addEventListener('alpine:init', () => {
+		Alpine.data('weatherWidget', (labels) => ({
+			loading: true,
+			error: false,
+			temperature: null,
+			apparentTemperature: null,
+			windSpeed: null,
+			summary: '',
+
+			async loadWeather() {
+				try {
+					const url =
+						'https://api.open-meteo.com/v1/forecast?latitude=50.545&longitude=23.213&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation,is_day&timezone=Europe%2FWarsaw';
+
+					const response = await fetch(url);
+
+					if (!response.ok) {
+						throw new Error('Weather request failed');
+					}
+
+					const data = await response.json();
+					const current = data.current;
+
+					this.temperature = Math.round(current.temperature_2m);
+					this.apparentTemperature = Math.round(current.apparent_temperature);
+					this.windSpeed = Math.round(current.wind_speed_10m);
+					this.summary = this.getWeatherSummary(
+						current.weather_code,
+						current.precipitation,
+						current.is_day,
+					);
+				} catch (error) {
+					this.error = true;
+				} finally {
+					this.loading = false;
+				}
+			},
+
+			getWeatherSummary(code, precipitation, isDay) {
+				if (precipitation > 0) return labels.rain;
+
+				if ([0].includes(code)) {
+					return isDay ? labels.sunDay : labels.sunNight;
+				}
+
+				if ([1, 2].includes(code)) return labels.cloudLight;
+				if ([3].includes(code)) return labels.cloud;
+				if ([45, 48].includes(code)) return labels.fog;
+				if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
+					return labels.showers;
+				}
+				if ([71, 73, 75, 77, 85, 86].includes(code)) return labels.winter;
+				if ([95, 96, 99].includes(code)) return labels.storm;
+
+				return labels.default;
+			},
+		}));
+	});
+</script>

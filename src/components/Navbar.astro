@@ -1,0 +1,145 @@
+---
+interface Props {
+	lang?: 'pl' | 'en';
+	langHref?: string;
+}
+
+const { lang = 'pl', langHref } = Astro.props;
+
+const labels = {
+	pl: {
+		rooms: 'Pokoje',
+		gallery: 'Galeria',
+		planner: 'Planer pobytu',
+		attractions: 'Atrakcje',
+		contact: 'Kontakt',
+		cta: 'Zapytaj o termin',
+		langLabel: 'EN',
+		langHref: '/en/',
+		homeHref: '/',
+	},
+	en: {
+		rooms: 'Rooms',
+		gallery: 'Gallery',
+		planner: 'Stay planner',
+		attractions: 'Attractions',
+		contact: 'Contact',
+		cta: 'Ask about dates',
+		langLabel: 'PL',
+		langHref: '/',
+		homeHref: '/en/',
+	},
+};
+
+const t = labels[lang];
+const languageHref = langHref ?? t.langHref;
+
+const navLinks = [
+	{ label: t.rooms, href: lang === 'pl' ? '/pokoje' : '/en/rooms' },
+	{ label: t.gallery, href: lang === 'pl' ? '/galeria' : '/en/gallery' },
+	{ label: t.planner, href: lang === 'pl' ? '/planer' : '/en/planner' },
+	{
+		label: t.attractions,
+		href: lang === 'pl' ? '/atrakcje' : '/en/attractions',
+	},
+	{ label: t.contact, href: lang === 'pl' ? '/kontakt' : '/en/contact' },
+];
+---
+
+<header
+	x-data="{ open: false }"
+	class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#173b2f]/35 text-white backdrop-blur-md"
+>
+	<nav class="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
+		<a href={t.homeHref} class="flex items-center" aria-label="U Kostka">
+			<img src="/images/logo.png" alt="U Kostka" class="h-16 w-auto" />
+		</a>
+
+		<div
+			class="hidden items-center gap-8 text-sm font-medium text-white/80 lg:flex"
+		>
+			{
+				navLinks.map((link) => (
+					<a href={link.href} class="transition hover:text-white">
+						{link.label}
+					</a>
+				))
+			}
+		</div>
+
+		<div class="hidden items-center gap-3 md:flex">
+			<a
+				href={languageHref}
+				class="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white/45 hover:text-white"
+			>
+				{t.langLabel}
+			</a>
+
+			<a
+				href={lang === 'pl' ? '/kontakt' : '/en/contact'}
+				class="rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#173b2f] transition hover:bg-[#f1dfc2]"
+			>
+				{t.cta}
+			</a>
+		</div>
+
+		<button
+			type="button"
+			class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-white/45 md:hidden"
+			aria-label="Otwórz menu"
+			:aria-expanded="open.toString()"
+			@click="open = !open"
+		>
+			<span class="sr-only">Menu</span>
+			<span class="relative h-4 w-5">
+				<span
+					class="absolute left-0 top-0 h-0.5 w-5 rounded-full bg-current transition"
+					:class="open ? 'translate-y-[7px] rotate-45' : ''"></span>
+				<span
+					class="absolute left-0 top-[7px] h-0.5 w-5 rounded-full bg-current transition"
+					:class="open ? 'opacity-0' : ''"></span>
+				<span
+					class="absolute left-0 top-[14px] h-0.5 w-5 rounded-full bg-current transition"
+					:class="open ? '-translate-y-[7px] -rotate-45' : ''"></span>
+			</span>
+		</button>
+	</nav>
+
+	<div
+		x-show="open"
+		x-transition.opacity.duration.200ms
+		@click.outside="open = false"
+		class="border-t border-white/10 bg-[#173b2f]/92 px-6 pb-6 pt-2 backdrop-blur-xl md:hidden"
+	>
+		<div class="mx-auto flex max-w-6xl flex-col gap-1">
+			{
+				navLinks.map((link) => (
+					<a
+						href={link.href}
+						class="rounded-2xl px-4 py-3 text-base font-medium text-white/82 transition hover:bg-white/8 hover:text-white"
+						@click="open = false"
+					>
+						{link.label}
+					</a>
+				))
+			}
+
+			<div class="mt-4 grid grid-cols-[auto_1fr] gap-3">
+				<a
+					href={languageHref}
+					class="inline-flex items-center justify-center rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white/80"
+				>
+					{t.langLabel}
+				</a>
+
+				<a
+					href={lang === 'pl' ? '/kontakt' : '/en/contact'}
+					class="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#173b2f]"
+					@click="open = false"
+				>
+					{t.cta}
+				</a>
+			</div>
+		</div>
+	</div>
+</header>

@@ -1,0 +1,179 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+	lang?: 'pl' | 'en';
+}
+
+const { lang = 'pl' } = Astro.props;
+
+const facebookHref = 'https://www.facebook.com/ukostkakrasnobrod/';
+const phoneHref = 'tel:+48514277002';
+const phoneLabel = '514 277 002';
+
+const content = {
+	pl: {
+		metaTitle: 'Kontakt | U Kostka Krasnobród',
+		metaDescription:
+			'Kontakt i rezerwacje telefoniczne w U Kostka Krasnobród. Noclegi blisko zalewu i atrakcji Roztocza.',
+		kicker: 'Kontakt / Rezerwacje',
+		title: 'Zapytaj o wolny termin',
+		description:
+			'Najprościej zadzwoń i zapytaj o dostępność. Jeśli wolisz, możesz też napisać wiadomość przez Facebooka.',
+		callCta: 'Zadzwoń',
+		facebookCta: 'Napisz na Messengerze',
+		detailsTitle: 'Dane kontaktowe',
+		addressTitle: 'Adres',
+		phoneTitle: 'Telefon',
+		facebookTitle: 'Facebook',
+		mapCta: 'Pokaż trasę w Google Maps',
+		noteTitle: 'Rezerwacje',
+		note: 'Rezerwacje przyjmujemy telefonicznie. W wiadomości na Facebooku możesz zapytać o dostępność terminu i poprosić o kontakt.',
+	},
+	en: {
+		metaTitle: 'Contact | U Kostka Krasnobród',
+		metaDescription:
+			'Contact and phone reservations at U Kostka Krasnobród. Accommodation close to the lagoon and Roztocze attractions.',
+		kicker: 'Contact / Reservations',
+		title: 'Ask about available dates',
+		description:
+			'The easiest way is to call and ask about availability. You can also send a message through Facebook.',
+		callCta: 'Call',
+		facebookCta: 'Message on Facebook',
+		detailsTitle: 'Contact details',
+		addressTitle: 'Address',
+		phoneTitle: 'Phone',
+		facebookTitle: 'Facebook',
+		mapCta: 'Open route in Google Maps',
+		noteTitle: 'Reservations',
+		note: 'Reservations are handled by phone. In a Facebook message, you can ask about date availability and request a call back.',
+	},
+};
+
+const t = content[lang];
+
+const mapsHref =
+	'https://www.google.com/maps/search/?api=1&query=Partyzant%C3%B3w%2033%2C%2022-440%20Krasnobr%C3%B3d';
+---
+
+<Layout
+	lang={lang}
+	langHref={lang === 'pl' ? '/en/contact' : '/kontakt'}
+	title={t.metaTitle}
+	description={t.metaDescription}
+>
+	<main class="bg-[#f7f1e8] text-[#173b2f]">
+		<section class="bg-[#173b2f] pt-36 text-white">
+			<div class="mx-auto max-w-6xl px-6 pb-20 pt-12">
+				<p
+					class="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-[#f1dfc2]"
+				>
+					{t.kicker}
+				</p>
+
+				<h1 class="max-w-4xl text-5xl font-semibold leading-[1.04] md:text-6xl">
+					{t.title}
+				</h1>
+
+				<p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+					{t.description}
+				</p>
+
+				<div class="mt-10 flex flex-col gap-4 sm:flex-row">
+					<a
+						href={phoneHref}
+						class="inline-flex justify-center rounded-full bg-[#f1dfc2] px-7 py-4 text-sm font-semibold text-[#173b2f] transition hover:bg-white"
+					>
+						{t.callCta}: {phoneLabel}
+					</a>
+
+					<a
+						href={facebookHref}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex justify-center rounded-full border border-white/25 px-7 py-4 text-sm font-semibold text-white transition hover:border-white"
+					>
+						{t.facebookCta}
+					</a>
+				</div>
+			</div>
+		</section>
+		<section
+			class="mx-auto grid max-w-6xl gap-8 px-6 py-16 md:grid-cols-[1fr_0.9fr] md:py-20"
+		>
+			<div class="rounded-[1.5rem] bg-white p-8 shadow-xl shadow-[#173b2f]/8">
+				<p
+					class="text-sm font-semibold uppercase tracking-[0.22em] text-[#8a6f45]"
+				>
+					{t.detailsTitle}
+				</p>
+
+				<div class="mt-8 space-y-6">
+					<div>
+						<p class="text-sm font-semibold text-[#8a6f45]">{t.addressTitle}</p>
+						<p class="mt-2 text-lg font-semibold">U Kostka Krasnobród</p>
+						<p class="mt-1 text-[#52685f]">Partyzantów 33</p>
+						<p class="text-[#52685f]">22-440 Krasnobród</p>
+					</div>
+
+					<div>
+						<p class="text-sm font-semibold text-[#8a6f45]">{t.phoneTitle}</p>
+						<a
+							href={phoneHref}
+							class="mt-2 block text-lg font-semibold transition hover:text-[#8a6f45]"
+						>
+							{phoneLabel}
+						</a>
+					</div>
+
+					<div>
+						<p class="text-sm font-semibold text-[#8a6f45]">
+							{t.facebookTitle}
+						</p>
+						<a
+							href={facebookHref}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="mt-2 block text-lg font-semibold transition hover:text-[#8a6f45]"
+						>
+							U Kostka Krasnobród
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div
+				class="rounded-[1.5rem] bg-[#173b2f] p-8 text-white shadow-xl shadow-[#173b2f]/12"
+			>
+				<p
+					class="text-sm font-semibold uppercase tracking-[0.22em] text-[#f1dfc2]"
+				>
+					{t.noteTitle}
+				</p>
+
+				<p class="mt-5 leading-8 text-white/72">
+					{t.note}
+				</p>
+
+				<a
+					href={mapsHref}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#173b2f] transition hover:bg-[#f1dfc2]"
+				>
+					{t.mapCta}
+				</a>
+				<div
+					class="mt-8 overflow-hidden rounded-[1.5rem] border border-[#173b2f]/10 bg-white shadow-xl shadow-[#173b2f]/8"
+				>
+					<iframe
+						title="Mapa U Kostka Krasnobród"
+						src="https://www.google.com/maps?q=Partyzant%C3%B3w%2033%2C%2022-440%20Krasnobr%C3%B3d&output=embed"
+						class="h-[360px] w-full"
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"></iframe>
+				</div>
+			</div>
+		</section>
+	</main>
+</Layout>
